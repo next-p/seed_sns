@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -53,10 +58,12 @@
                 <tr>
                   <td><div class="text-center">ニックネーム</div></td>
                   <td><div class="text-center">Seed kun</div></td>
+                  <td><div class="text-center"> <?php echo $_SESSION['join']['nick_name'];?> </div></td>
                 </tr>
                 <tr>
                   <td><div class="text-center">メールアドレス</div></td>
                   <td><div class="text-center">seed@nex.com</div></td>
+                  <td><div class="text-center"> </div> <?php echo $_SESSION['join']['email'];?></div></td>
                 </tr>
                 <tr>
                   <td><div class="text-center">パスワード</div></td>

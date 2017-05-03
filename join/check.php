@@ -1,6 +1,16 @@
 <?php
 session_start();
+//セッションにデータがなかったらindex.phpへ遷移する
+if (!isset($_SESSION['join'])) {
+  header('Location: index.php');
+  exit();
+  //ここで処理を終了する
+}
+//htmlspecialchars サニタイジング　ハッキング阻止
+$nick_name = htmlspecialchars($_SESSION['join']['nick_name'],ENT_QUOTES,'UTF-8');
+$email = htmlspecialchars($_SESSION['join']['email'],ENT_QUOTES,'UTF-8');
 
+$picture_path = htmlspecialchars($_SESSION['join']['picture_path'],ENT_QUOTES,'UTF-8')
 ?>
 
 <!DOCTYPE html>
@@ -58,12 +68,12 @@ session_start();
                 <tr>
                   <td><div class="text-center">ニックネーム</div></td>
                   
-                  <td><div class="text-center"> <?php echo $_SESSION['join']['nick_name'];?> </div></td>
+                  <td><div class="text-center"> <?php echo $nick_name;?> </div></td>
                 </tr>
                 <tr>
                   <td><div class="text-center">メールアドレス</div></td>
                   
-                  <td><div class="text-center"> </div> <?php echo $_SESSION['join']['email'];?></div></td>
+                  <td><div class="text-center"> </div> <?php echo $email?></div></td>
                 </tr>
                 <tr>
                   <td><div class="text-center">パスワード</div></td>
@@ -71,7 +81,10 @@ session_start();
                 </tr>
                 <tr>
                   <td><div class="text-center">プロフィール画像</div></td>
-                  <td><div class="text-center"><img src="http://c85c7a.medialib.glogster.com/taniaarca/media/71/71c8671f98761a43f6f50a282e20f0b82bdb1f8c/blog-images-1349202732-fondo-steve-jobs-ipad.jpg" width="100" height="100"></div></td>
+                  <!-- memberpictureの画像を反映する-->
+
+                  <td><div class="text-center"><img src="../menber_picture/<?php echo $picture_path;?>" width="100" height="100"></div>
+                  </td>
                 </tr>
               </tbody>
             </table>

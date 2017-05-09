@@ -22,7 +22,8 @@ if (!empty($_POST)) {
   //データベースサニタイズ
   mysqli_real_escape_string($db,$_SESSION['join']['nick_name']),
   mysqli_real_escape_string($db,$_SESSION['join']['email']),
-  mysqli_real_escape_string($db,$_SESSION['join']['password']),
+  //パスワードを暗号化 sha1暗号化の種類
+  mysqli_real_escape_string($db,sha1($_SESSION['join']['password'])),
   mysqli_real_escape_string($db,$_SESSION['join']['picture_path'])
   );
 

@@ -1,5 +1,9 @@
 <?php
 session_start();
+// dbconnect.phpを読み込む
+require ('../dbconnect.php');
+
+
 //セッションにデータがなかったらindex.phpへ遷移する
 if (!isset($_SESSION['join'])) {
   header('Location: index.php');
@@ -10,8 +14,29 @@ if (!isset($_SESSION['join'])) {
 $nick_name = htmlspecialchars($_SESSION['join']['nick_name'],ENT_QUOTES,'UTF-8');
 $email = htmlspecialchars($_SESSION['join']['email'],ENT_QUOTES,'UTF-8');
 
-$picture_path = htmlspecialchars($_SESSION['join']['picture_path'],ENT_QUOTES,'UTF-8')
+$picture_path = htmlspecialchars($_SESSION['join']['picture_path'],ENT_QUOTES,'UTF-8');
+
+//DB登録処理
+if (!empty($_POST)) {
+  $sql = sprintf('INSERT INTO `members` (`nick_name`, `email`, `password`, `picture_path`, `created`, `modified`) VALUES ("%s", "%s", "%s", "%s", now(),now());',
+  //データベースサニタイズ
+  mysqli_real_escape_string($db,$_SESSION['join']['nick_name']),
+  mysqli_real_escape_string($db,$_SESSION['join']['email']),
+  mysqli_real_escape_string($db,$_SESSION['join']['password']),
+  mysqli_real_escape_string($db,$_SESSION['join']['picture_path'])
+  );
+
+  
+
+
+  mysqli_query($db,$sql) or die(mysqli_error($db));
+  header("Location: thanks.php");
+  exit();
+}
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -88,8 +113,8 @@ $picture_path = htmlspecialchars($_SESSION['join']['picture_path'],ENT_QUOTES,'U
                 </tr>
               </tbody>
             </table>
-
-            <a href="index.html">&laquo;&nbsp;書き直す</a> |
+            <!--書き直しでindex.phpに戻る -->
+            <a href="index.php?action=rewrite">&laquo;&nbsp;書き直す</a> |
             <input type="submit" class="btn btn-default" value="会員登録">
           </div>
         </form>

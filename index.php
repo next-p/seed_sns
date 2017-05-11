@@ -59,12 +59,27 @@
 
  //投稿を取得する
     //$sql = 'SELECT * FROM `tweets`;';
-	$sql = 'SELECT `members`.`nick_name`,`members`.`picture_path`,`tweets`.* FROM `tweets` INNER JOIN `members` on `tweets`.`member_id` = `members`.`member_id`';
+  $sql = 'SELECT `members`.`nick_name`,`members`.`picture_path`,`tweets`.* FROM `tweets` INNER JOIN `members` on `tweets`.`member_id` = `members`.`member_id`';
     $tweets = mysqli_query($db,$sql) or die (mysqli_error($db));
 
     $tweets_array = array();
     while ($tweet = mysqli_fetch_assoc($tweets)) {
-    	$tweets_array[] = $tweet;
+      $tweets_array[] = $tweet;
+    }
+
+    //返信の場合
+    if (isset($_REQUEST['res'])){
+      //返信元のデータ（つぶやきとニックネーム）を取得する テーブル結合を使う 
+      //on がどういう風にくっつけるか where 取ってくるための取得条件
+      $sql = 'SELECT `tweets`.`tweet`,`members`.`nick_name` FROM  `tweets`INNER JOIN `members` on `tweets` .`member_id` = `members`.`member_id` WHERE `tweet_id` = '.$_REQUEST['res'] ;
+      //select文を実行するため
+      $reply = mysqli_query($db,$sql) or die(mysqli_error($db));
+      $reply_table = mysqli_fetch_assoc($reply);
+
+
+      //@ニックネーム　つぶやき　という文字をセット
+      $reply_post = '@'.$reply_table['nick_name'].' '.$reply_table['tweet'];
+
     }
 
 
@@ -119,7 +134,10 @@
             <div class="form-group">
               <label class="col-sm-4 control-label">つぶやき</label>
               <div class="col-sm-8">
-                <textarea name="tweet" cols="50" rows="5" class="form-control" placeholder="例：Hello World!"></textarea>
+              <?php if (isset($reply_post)){ ?>
+              <?php }else{ ?>
+              <?php } ?> 
+                <textarea name="tweet" cols="50" rows="5" class="form-control" placeholder="例：Hello World!"><?php echo $reply_post; ?></textarea>
               </div>
             </div>
           <ul class="paging">
@@ -135,17 +153,17 @@
       <div class="col-md-8 content-margin-top">
         <!-- ここでつぶやいた内容を表示する-->
         <?php foreach ($tweets_array as $tweet_each){
-        	
+          
          ?>
         <div class="msg">
-       <img src="member_picture/<?php echo $tweet_each['picture_path']; ?>" width="48" height="48">
+       <img src="member_picture/<?php echo $tweet_each['picture_path']; ?>"width="48" height="48">
           <p>
             <?php echo $tweet_each['tweet']; ?><span class="name"> (<?php echo $tweet_each['nick_name']; ?>)
-            	</span>
-            [<a href="#">Re</a>]
+              </span>
+            [<a href="index.php?res=<?php echo $tweet_each['tweet_id']; ?>">Re</a>]
           </p>
           <p class="day">
-            <a href="view.html">
+            <a href="view.php?res=<?php echo $tweet_each['tweet_id']; ?>">
               <?php echo $tweet_each['created']; ?>
             </a>
             [<a href="#" style="color: #00994C;">編集</a>]
